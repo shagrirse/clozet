@@ -1,7 +1,9 @@
-import tseslint from 'typescript-eslint';
-import reactPlugin from 'eslint-plugin-react';
-import hooksPlugin from 'eslint-plugin-react-hooks';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import tseslint from 'typescript-eslint'
+import pluginNext from '@next/eslint-plugin-next'
+import reactPlugin from 'eslint-plugin-react'
+import hooksPlugin from 'eslint-plugin-react-hooks'
+import parser from '@typescript-eslint/parser'
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 
 export default tseslint.config(
   {
@@ -9,6 +11,7 @@ export default tseslint.config(
     plugins: {
       react: reactPlugin,
       'react-hooks': hooksPlugin,
+      '@next/next': pluginNext,
     },
     extends: [
       ...tseslint.configs.recommended,
@@ -42,12 +45,27 @@ export default tseslint.config(
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/restrict-plus-operands': 'off',
-      'prettier/prettier': ['error', { semi: false }],
+      ...pluginNext.configs.recommended.rules,
+      ...pluginNext.configs['core-web-vitals'].rules,
+    },
+    linterOptions: { reportUnusedDisableDirectives: true },
+    languageOptions: {
+      parser,
+      parserOptions: {
+        projectService: true,
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        tsconfigRootDir: import.meta.dirname,
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
     },
   },
-  {
-    linterOptions: { reportUnusedDisableDirectives: true },
-    languageOptions: { parserOptions: { projectService: true } },
-  },
   eslintPluginPrettierRecommended,
-);
+  {
+    rules: {
+      'prettier/prettier': ['error', { semi: false, endOfLine: 'auto' }],
+    },
+  },
+)

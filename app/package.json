@@ -2,15 +2,15 @@
   "name": "clozet-app",
   "private": true,
   "engines": {
-    "node": ">=18.15.0"
+    "node": ">=20.0.0"
   },
-  "packageManager": "pnpm@9.12.2",
+  "packageManager": "npm@11.3.0",
   "scripts": {
     "prebuild": "prisma generate && prisma migrate deploy",
-    "build:1-next": "cross-env NODE_ENV=production next build",
+    "build:1-next": "dotenv -v NODE_ENV=production -- next build",
     "build:2-server": "tsc --project tsconfig.server.json",
     "build": "run-s build:*",
-    "dev:wss": "cross-env PORT=3001 tsx watch src/server/wssDevServer.ts --tsconfig tsconfig.server.json ",
+    "dev:wss": "dotenv -v PORT=3001 -- tsx watch src/server/wssDevServer.ts --tsconfig tsconfig.server.json",
     "dev:next": "next dev",
     "dev": "run-s migrate-dev && run-p dev:*",
     "db-up": "docker-compose up -d",
@@ -22,12 +22,12 @@
     "generate": "prisma generate",
     "migrate-dev": "prisma migrate dev",
     "migrate": "prisma migrate deploy",
-    "start": "cross-env NODE_ENV=production node dist/server/prodServer.js",
+    "start": "dotenv -v NODE_ENV=production -- node dist/server/prodServer.js",
     "studio": "prisma studio",
     "lint": "eslint --cache src",
     "lint-fix": "lint --fix",
-    "test-dev": "cross-env APP_ENV=test start-server-and-test dev 3000 test",
-    "test-start": "cross-env APP_ENV=test WS_URL=ws://localhost:3000 start-server-and-test start 3000 test",
+    "test-dev": "dotenv -v APP_ENV=test -- start-server-and-test dev http://localhost:3000 test",
+    "test-start": "dotenv -v APP_ENV=test -v WS_URL=ws://localhost:3000 -- start-server-and-test start http://localhost:3000 test",
     "test": "playwright test",
     "postinstall": "prisma generate"
   },
@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.7.0",
+    "@tailwindcss/postcss": "^4.1.6",
     "@tanstack/react-query": "^5.74.7",
     "@trpc/client": "npm:@trpc/client",
     "@trpc/next": "npm:@trpc/next",
@@ -49,21 +50,24 @@
     "clsx": "^2.0.0",
     "next": "^15.3.1",
     "next-auth": "npm:next-auth@^4.24.11",
+    "postcss": "^8.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "superjson": "^1.12.4",
+    "tailwindcss": "^4.1.6",
     "tsx": "^4.19.3",
-    "ws": "^8.0.0",
+    "ws": "^8.18.2",
     "zod": "^3.24.4"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.1",
+    "@next/eslint-plugin-next": "^15.3.2",
+    "@playwright/test": "^1.52.0",
     "@tanstack/react-query-devtools": "^5.74.7",
     "@types/node": "^22.13.5",
     "@types/react": "^19.1.0",
     "@types/ws": "^8.2.0",
-    "autoprefixer": "^10.4.7",
     "cross-env": "^7.0.3",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.26.0",
     "eslint-config-next": "^15.3.1",
     "eslint-config-prettier": "^10.1.5",
@@ -71,16 +75,14 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "6.0.0-rc.1",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.4.39",
     "prettier": "3.5.3",
     "prisma": "^6.7.0",
     "start-server-and-test": "^2.0.11",
-    "tailwindcss": "^3.4.6",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.31.1"
   },
   "publishConfig": {
     "access": "restricted"
   },
-  "version": "11.1.2"
+  "version": "0.0.1"
 }

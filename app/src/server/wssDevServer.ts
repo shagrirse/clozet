@@ -13,11 +13,13 @@ wss.on('connection', (ws) => {
   ws.once('close', () => {
     console.log(`➖➖ Connection (${wss.clients.size})`)
   })
+  ws.on('error', (err) => {
+    console.error('WebSocket error:', err)
+  })
 })
 console.log('✅ WebSocket Server listening on ws://localhost:3001')
 
 process.on('SIGTERM', () => {
-  console.log('SIGTERM')
   handler.broadcastReconnectNotification()
   wss.close()
 })

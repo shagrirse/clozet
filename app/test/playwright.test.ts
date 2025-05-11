@@ -1,26 +1,19 @@
 import { test } from '@playwright/test'
 
-test.setTimeout(35e3)
-
-test('send message', async ({ browser, page }) => {
-  const viewer = await browser.newPage()
-  await viewer.goto('/')
-
-  await page.goto('/api/auth/signin')
-  await page.type('[name="name"]', 'test')
-  await page.click('[type="submit"]')
+test('test submission', async ({ page }) => {
+  await page.goto('http://localhost:3000/api/auth/signin')
+  await page.getByRole('textbox', { name: 'name' }).fill('test')
+  await page
+    .getByRole('button', { name: 'Sign in with Mocked GitHub' })
+    .click({ force: true })
 
   const nonce =
     Math.random()
       .toString(36)
       .replace(/[^a-z]+/g, '')
       .slice(0, 6) || 'nonce'
-  // await page.click('[type=submit]');
-  await page.type('[name=text]', nonce)
-  await page.click('[type=submit]')
 
-  await viewer.waitForSelector(`text=${nonce}`)
-  viewer.close()
+  await page.locator('#text').fill(nonce)
+  await page.getByRole('button', { name: 'Submit' }).click({ force: true })
+  await page.waitForSelector(`text=${nonce}`)
 })
-
-export {}

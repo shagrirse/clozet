@@ -1,7 +1,14 @@
-name: E2E-testing
-on: [push]
+name: Playwright Tests
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 jobs:
-  e2e:
+  test:
+    defaults:
+      run:
+        working-directory: ./app
     services:
       postgres:
         image: postgres
@@ -14,49 +21,34 @@ jobs:
     env:
       NODE_ENV: test
       NEXTAUTH_SECRET: supersecret
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        node: ['18.x']
-        os: [ubuntu-latest]
+      NEXTAUTH_URL: http://localhost:3000/api/auth
+      APP_URL: http://localhost:3000
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/clozet?schema=public
+      WS_URL: ws://localhost:3001
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 8.5.1
-
-      - name: Use Node ${{ matrix.node }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-          # cache: 'pnpm' # You can active this cache when your repo has a lockfile
-
-      - name: Install deps (with cache)
-        run: pnpm install
-
-      - name: Install playwright
-        run: pnpm exec playwright install chromium
-
-      - name: Next.js cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-${{ runner.node }}-${{ hashFiles('**/pnpm-lock.yaml') }}-nextjs
-
-      - name: Setup Prisma
-        run: pnpm prebuild
-
-      - name: Build and test
-        run: pnpm build && pnpm test-start && pnpm test-dev
-
-      - name: Upload test results
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: test results
-          path: |
-            playwright/test-results
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Setup Prisma
+      run: |
+        export DATABASE_URL=$DATABASE_URL
+        npm run prebuild
+    - name: Build
+      run: npm run build
+    - name: Test Start
+      run: npm run test-start
+    - name: Test Dev
+      run: npm run test-dev
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: app/playwright-report/
+        retention-days: 30
