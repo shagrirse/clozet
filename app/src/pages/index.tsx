@@ -270,12 +270,6 @@ export default function IndexPage() {
                           </a>
                         )}
                       </h3>
-                      <span className="text-gray-500">
-                        {new Intl.DateTimeFormat('en-GB', {
-                          dateStyle: 'short',
-                          timeStyle: 'short',
-                        }).format(item.createdAt)}
-                      </span>
                     </header>
                     <p className="whitespace-pre-line text-xl leading-tight">
                       {item.text}

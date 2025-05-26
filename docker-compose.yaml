@@ -1,0 +1,48 @@
+services:
+  clozet-postgres:
+    container_name: clozet-postgres
+    image: postgres:13
+    ports:
+      - '5432:5432' # expose pg on port 5932 to not collide with pg from elsewhere
+    restart: always
+    volumes:
+      - clozet_db_data:/var/lib/postgresql/data
+    env_file: ./app/.env
+    environment:
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+  nextjs-server:
+    container_name: nextjs-server
+    build:
+      context: ./app
+      dockerfile: ./Dockerfile
+    ports:
+      - '3000:3000'
+      - '3001:3001'
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules
+      - nextjs_cache:/usr/src/app/.next
+    env_file: ./app/.env
+    depends_on:
+      - clozet-postgres
+  nginx:
+    container_name: nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile-alpine
+    env_file:
+      - ./nginx/.env
+    volumes:
+      - nginx_secrets:/etc/letsencrypt
+      - ./nginx/letsencrypt:/var/www/letsencrypt
+
+volumes:
+  clozet_db_data:
+  nextjs_cache:
+  nginx_secrets:

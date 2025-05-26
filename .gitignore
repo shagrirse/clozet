@@ -140,3 +140,6 @@ dist
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Nginx Config Files
+/nginx/user_conf.d/*.conf
