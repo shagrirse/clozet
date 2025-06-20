@@ -35,3 +35,6 @@ yarn-error.log*
 
 *.db
 *.db-journal
+
+*storybook.log
+storybook-static
