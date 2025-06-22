@@ -11,8 +11,8 @@
     "build:2-server": "tsc --project tsconfig.server.json",
     "build": "run-s build:*",
     "dev:wss": "dotenv -v PORT=3001 -- tsx watch src/server/wssDevServer.ts --tsconfig tsconfig.server.json",
-    "dev:next": "next dev",
-    "dev": "run-s migrate-dev && run-p dev:*",
+    "dev:next": "next dev --turbopack",
+    "dev": "WATCHPACK_POLLING=true run-s migrate-dev && run-p dev:*",
     "db-up": "docker-compose up -d",
     "db-seed": "prisma db seed",
     "db-migrate-dev": "prisma migrate dev",
@@ -40,6 +40,7 @@
     "singleQuote": true
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.3.0",
     "@prisma/client": "^6.7.0",
     "@tailwindcss/postcss": "^4.1.6",
     "@tanstack/react-query": "^5.75.7",

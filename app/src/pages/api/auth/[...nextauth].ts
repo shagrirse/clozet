@@ -1,18 +1,24 @@
 import NextAuth from 'next-auth'
 import type { AppProviders } from 'next-auth/providers'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import GithubProvider from 'next-auth/providers/github'
+import Auth0Provider from 'next-auth/providers/auth0'
 
 let useMockProvider =
   process.env.NODE_ENV === 'test' ||
   process.env.RAILWAY_ENVIRONMENT_NAME?.includes('-pr-') // example: 'trpc-pr-5821'
 
-const { GITHUB_CLIENT_ID, GITHUB_SECRET, NODE_ENV, APP_ENV } = process.env
-if (
-  (NODE_ENV !== 'production' || APP_ENV === 'test') &&
-  (!GITHUB_CLIENT_ID || !GITHUB_SECRET)
-) {
-  console.log('⚠️ Using mocked GitHub auth correct credentials were not added')
+const {
+  AUTH0_CLIENT_ID,
+  AUTH0_CLIENT_SECRET,
+  AUTH0_ISSUER,
+  NODE_ENV,
+  APP_ENV,
+} = process.env
+
+const notConfigured = !AUTH0_CLIENT_ID || !AUTH0_CLIENT_SECRET || !AUTH0_ISSUER
+
+if ((NODE_ENV !== 'production' || APP_ENV === 'test') && notConfigured) {
+  console.log('⚠️ Using mocked Auth0 auth correct credentials were not added')
   useMockProvider = true
 }
 const providers: AppProviders = []
@@ -38,25 +44,44 @@ if (useMockProvider) {
     }),
   )
 } else {
-  if (!GITHUB_CLIENT_ID || !GITHUB_SECRET) {
-    throw new Error('GITHUB_CLIENT_ID and GITHUB_SECRET must be set')
+  if (notConfigured) {
+    throw new Error(
+      'AUTH0_CLIENT_ID and AUTH0_CLIENT_SECRET and AUTH0_ISSUER must be set',
+    )
   }
   providers.push(
-    GithubProvider({
-      clientId: GITHUB_CLIENT_ID,
-      clientSecret: GITHUB_SECRET,
-      profile(profile) {
-        return {
-          id: profile.id,
-          name: profile.login,
-          email: profile.email,
-          image: profile.avatar_url,
-        } as any
-      },
+    Auth0Provider({
+      clientId: AUTH0_CLIENT_ID,
+      clientSecret: AUTH0_CLIENT_SECRET,
+      issuer: AUTH0_ISSUER,
     }),
   )
 }
 export default NextAuth({
   // Configure one or more authentication providers
   providers,
+  session: {
+    strategy: 'jwt',
+  },
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      return true
+    },
+    async redirect({ url, baseUrl }) {
+      console.log(baseUrl)
+      return baseUrl
+    },
+    async session({ session, user, token }) {
+      console.log(session)
+      return session
+    },
+    async jwt({ token, user, account, profile, isNewUser }) {
+      // Persist the OAuth access_token and or the user id to the token right after signin
+      if (account) {
+        token.accessToken = account.access_token
+        token.id = profile.id
+      }
+      return token
+    },
+  },
 })

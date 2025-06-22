@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image
-FROM node:20
+FROM node:20-alpine
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
@@ -12,12 +12,3 @@ COPY prisma ./prisma
 
 # Install dependencies
 RUN npm install
-
-# Copy the rest of the application code
-COPY . .
-
-# Expose the port Next.js runs on
-EXPOSE 3000
-
-# Start the development server
-CMD ["npm", "run", "dev"]
