@@ -20,7 +20,7 @@
     "dx": "run-s db-up db-migrate-dev db-seed dev",
     "dev-nuke": "rm -rf prisma/*.db**",
     "generate": "prisma generate",
-    "migrate-dev": "prisma migrate dev",
+    "migrate-dev": "prisma migrate dev --name init",
     "migrate": "prisma migrate deploy",
     "start": "dotenv -v NODE_ENV=production -- node dist/server/prodServer.js",
     "studio": "prisma studio",

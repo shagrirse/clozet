@@ -1,6 +1,6 @@
 services:
-  clozet-postgres:
-    container_name: clozet-postgres
+  postgres:
+    container_name: postgres
     image: postgres:13
     ports:
       - '5432:5432' # expose pg on port 5932 to not collide with pg from elsewhere
@@ -27,7 +27,7 @@ services:
       - nextjs_cache:/usr/src/app/.next
     env_file: ./app/.env
     depends_on:
-      - clozet-postgres
+      - postgres
     command: 'npm run dev'
   nginx:
     container_name: nginx
@@ -44,6 +44,22 @@ services:
     volumes:
       - nginx_secrets:/etc/letsencrypt
       - ./nginx/letsencrypt:/var/www/letsencrypt
+  prisma-studio:
+    container_name: prisma-studio
+    image: node:lts-alpine3.17
+    working_dir: /usr/src/app
+    volumes:
+      - ./app:/usr/src/app
+    command: npx prisma studio --port 5555 --browser none
+    ports:
+      - "5555:5555"
+    env_file:
+      - ./app/.env
+    depends_on:
+      postgres:
+        condition: service_started
+      nextjs-server:
+        condition: service_started
 
 volumes:
   clozet_db_data:
