@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import type { AppProviders } from 'next-auth/providers'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import Auth0Provider from 'next-auth/providers/auth0'
@@ -57,25 +57,23 @@ if (useMockProvider) {
     }),
   )
 }
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers,
   session: {
     strategy: 'jwt',
   },
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    signIn() {
       return true
     },
-    async redirect({ url, baseUrl }) {
-      console.log(baseUrl)
+    redirect({ baseUrl }) {
       return baseUrl
     },
-    async session({ session, user, token }) {
-      console.log(session)
+    session({ session }) {
       return session
     },
-    async jwt({ token, user, account, profile, isNewUser }) {
+    jwt({ token, account, profile }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
       if (account) {
         token.accessToken = account.access_token
@@ -84,4 +82,5 @@ export default NextAuth({
       return token
     },
   },
-})
+}
+export default NextAuth(authOptions)

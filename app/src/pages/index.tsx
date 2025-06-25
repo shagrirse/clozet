@@ -1,7 +1,24 @@
 import { signIn } from 'next-auth/react'
+import { trpc } from '~/utils/trpc'
 
 export default function IndexPage() {
-  return <button onClick={() => signIn('auth0')}>Log In</button>
+  const healthcheck = trpc.healthcheck.useQuery(undefined, {
+    enabled: false,
+    retry: false,
+  })
+
+  const fetchThis = async () => {
+    const response = await healthcheck.refetch()
+    console.log(response.data)
+  }
+
+  return (
+    <>
+      <button onClick={() => fetchThis()}>Log In</button>
+      <br />
+      <button onClick={() => signIn('auth0')}>Log In</button>
+    </>
+  )
 }
 
 /**

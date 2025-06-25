@@ -6,7 +6,7 @@ import type { Socket } from 'net'
 import { WebSocketServer } from 'ws'
 import { applyWSSHandler } from '@trpc/server/adapters/ws'
 
-import { createContext } from './context'
+import { createContext } from './context/websocketContext'
 import { appRouter } from './routers/_app'
 
 const port = parseInt(process.env.PORT || '3000', 10)

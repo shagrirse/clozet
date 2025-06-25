@@ -8,7 +8,7 @@
  * @see https://trpc.io/docs/v11/procedures
  */
 
-import type { Context } from './context'
+import type { Context } from './context/defaultContext'
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 

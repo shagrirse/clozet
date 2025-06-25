@@ -1,4 +1,4 @@
-import { createContext } from './context'
+import { createContext } from './context/websocketContext'
 import { appRouter } from './routers/_app'
 import { applyWSSHandler } from '@trpc/server/adapters/ws'
 import { WebSocketServer } from 'ws'
