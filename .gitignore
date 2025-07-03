@@ -144,4 +144,5 @@ dist
 # Nginx Config Files
 /nginx/user_conf.d/*.conf
 
-/app/prisma/client/
+/app/prisma
+/prisma/client

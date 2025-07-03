@@ -4,6 +4,9 @@
   },
   "scripts": {
     "prepare": "husky",
-    "dev": "docker-compose --profile development up -d"
+    "dev": "docker-compose --profile development up -d",
+    "prod": "docker-compose --profile prod up -d",
+    "down": "docker compose down",
+    "prisma:sync": "docker cp nextjs-server:/usr/src/app/prisma ./app"
   }
 }
