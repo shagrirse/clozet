@@ -16,7 +16,7 @@ import SuperJSON from 'superjson'
 
 import { type AppRouter } from '~/server/api/root'
 import { createQueryClient } from './query-client'
-import { getBaseUrl, getWsUrl } from './shared'
+import { getWsUrl } from './shared'
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined
 const getQueryClient = () => {
@@ -73,7 +73,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 function getEndingLink() {
   const batchLink = httpBatchLink({
     transformer: SuperJSON,
-    url: getBaseUrl() + '/api/trpc',
+    url: '/api/trpc',
     headers: () => {
       const headers = new Headers()
       headers.set('x-trpc-source', 'nextjs-react')
