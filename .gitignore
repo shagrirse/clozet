@@ -142,7 +142,7 @@ dist
 /playwright/.cache/
 
 # Nginx Config Files
-/nginx/user_conf.d/*.conf
+/nginx/nginx_conf.d/server.conf
 
 /app/prisma
 /prisma/client

@@ -1,7 +1,7 @@
 services:
   postgres:
     container_name: postgres
-    image: postgres:13
+    image: postgres:17-alpine
     ports:
       - '5432:5432' # expose pg on port 5932 to not collide with pg from elsewhere
     restart: always
@@ -44,8 +44,7 @@ services:
       - ./nginx/.env
     volumes:
       - nginx_secrets:/etc/letsencrypt
-      - ./nginx/letsencrypt:/var/www/letsencrypt
-      - ./nginx/user_conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx_conf.d/:/etc/nginx/conf.d/
   prisma-studio:
     container_name: prisma-studio
     image: node:lts-alpine3.17

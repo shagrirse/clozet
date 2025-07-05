@@ -82,12 +82,12 @@ RUN chmod +x -R /scripts && \
 # Make so that the parent's entrypoint script is properly triggered (issue #21).
     sed -ri '/^if \[ "\$1" = "nginx" \] \|\| \[ "\$1" = "nginx-debug" \]; then$/,${s//if echo "$1" | grep -q "nginx"; then/;b};$q1' /docker-entrypoint.sh
 
+RUN find /scripts -type f -print0 | xargs -0 dos2unix
+
 # Copy in our "default" Nginx server configurations, which make sure that the
 # ACME challenge requests are correctly forwarded to certbot and then redirects
 # everything else to HTTPS.
 COPY nginx_conf.d/ /etc/nginx/conf.d/
-
-COPY user_conf.d/ /etc/nginx/conf.d/
 
 # Create a volume to have persistent storage for the obtained certificates.
 VOLUME /etc/letsencrypt
