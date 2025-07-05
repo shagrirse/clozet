@@ -1,6 +1,7 @@
 'use client'
 import { api } from '~/trpc/react'
 import { useState } from 'react'
+import LoginButton from '~/features/login/login-button'
 
 export default function Home() {
   const [name, setName] = useState('')
