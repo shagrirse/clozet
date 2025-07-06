@@ -1,23 +1,20 @@
 services:
   postgres:
+    build:
+      dockerfile: ./docker/Dockerfile.pg
     container_name: postgres
-    image: postgres:17-alpine
     ports:
       - '5432:5432' # expose pg on port 5932 to not collide with pg from elsewhere
     restart: always
     volumes:
-      - clozet_db_data:/var/lib/postgresql/data
-    env_file: ./app/.env
-    environment:
-      POSTGRES_USER: ${PGUSER}
-      POSTGRES_PASSWORD: ${PGPASSWORD}
-      POSTGRES_HOST_AUTH_METHOD: trust
+      - clozet_db_data:/var/lib/postgresql/data/clozet/
+    env_file: ./docker/pg_config/postgres.env
 
   nextjs-server:
     container_name: nextjs-server
     build:
       context: ./
-      dockerfile: Dockerfile.app
+      dockerfile: ./docker/Dockerfile.app
     ports:
       - '3000:3000'
       - '3001:3001'
@@ -28,7 +25,8 @@ services:
       - nextjs_cache:/usr/src/app/.next
     env_file: ./app/.env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
     command: 'npm run dev'
   nginx:
     container_name: nginx
@@ -39,7 +37,7 @@ services:
       - '443:443'
     build:
       context: ./nginx
-      dockerfile: Dockerfile-alpine
+      dockerfile: ../docker/Dockerfile-nginx
     env_file:
       - ./nginx/.env
     volumes:
@@ -67,7 +65,7 @@ services:
     build:
       context: ./
       target: builder
-      dockerfile: Dockerfile.instagram-scraper
+      dockerfile: ./docker/Dockerfile.instagram-scraper
     stop_signal: SIGINT
     ports:
       - 8080:8080
