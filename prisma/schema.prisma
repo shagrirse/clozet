@@ -1,6 +1,15 @@
 datasource db {
   provider = "postgres"
   url      = env("DATABASE_URL")
+  // TODO: Add in when the Prisma extension support extends to pg_cron https://github.com/prisma/prisma/issues/18214
+  // extensions = [pg_cron]
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+  // TODO: Add in when the Prisma extension support extends to pg_cron https://github.com/prisma/prisma/issues/18214
+  // previewFeatures = ["postgresqlExtensions"]
 }
 
 model User {
@@ -24,6 +33,7 @@ model User {
   orders              Order[]
   rentals             Rental[]
   collaboratorOnDrops CollaboratorAssignment[]
+  telegramOnboardingCodes TelegramOnboardingCode[]
 }
 
 model Supplier {
@@ -227,9 +237,14 @@ enum RentalStatus {
   COMPLETED
 }
 
-generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+model TelegramOnboardingCode {
+  code      String   @id @default(cuid())
+  userId    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  used      Boolean  @default(false)
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // NextAuth Adapter Tables
