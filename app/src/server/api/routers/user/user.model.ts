@@ -5,9 +5,10 @@ import { withPrismaErrorHandler } from '~/utils/withPrismaErrorHandler'
 export const userRouter = {
   add: protectedProcedure.input(addUserSchema).mutation(
     withPrismaErrorHandler(({ ctx, input }) => {
-      return ctx.db.user.create({
-        data: input,
+      const res = ctx.db.user.create({
+        data: input!,
       })
+      return res
     }),
   ),
 }

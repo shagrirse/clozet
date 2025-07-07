@@ -1,12 +1,13 @@
 import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
+import { TRPCContext } from '~/server/api/trpc'
 
-export function withPrismaErrorHandler<
-  T extends (...args: any[]) => Promise<any>,
->(resolver: T): T {
-  return (async (...args: any[]) => {
+export function withPrismaErrorHandler<I = undefined, R = unknown>(
+  handler: (opts: { ctx: TRPCContext; input?: I }) => Promise<R>,
+): (opts: { ctx: TRPCContext; input?: I }) => Promise<R> {
+  return async (opts) => {
     try {
-      return await resolver(...args)
+      return await handler(opts)
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
@@ -27,5 +28,5 @@ export function withPrismaErrorHandler<
         message: 'An unexpected error occurred.',
       })
     }
-  }) as T
+  }
 }
