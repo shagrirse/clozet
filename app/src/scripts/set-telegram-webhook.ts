@@ -1,11 +1,14 @@
-const { APP_URL: webhookBaseUrl = '' } = process.env
+const { APP_URL: webhookBaseUrl = '', TELEGRAM_SECRET } = process.env
 import { bot } from '~/lib/telegram-bot'
 
 export async function setTelegramWebhook() {
   const webhookUrl = webhookBaseUrl + '/api/webhook/telegram'
   try {
+    if (!TELEGRAM_SECRET) throw Error('No telegram secret set in envvar')
     await bot.api.deleteWebhook()
-    const res = await bot.api.setWebhook(webhookUrl)
+    const res = await bot.api.setWebhook(webhookUrl, {
+      secret_token: TELEGRAM_SECRET,
+    })
     if (res) {
       console.log(`✅ Telegram Webhook URL set to ${webhookUrl}`)
     }
