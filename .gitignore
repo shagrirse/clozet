@@ -144,9 +144,6 @@ dist
 # Nginx Config Files
 /nginx/nginx_conf.d/server.conf
 
-/app/prisma
-/prisma/client
-
 # Terraform
 *.tfstate
 

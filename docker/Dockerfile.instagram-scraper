@@ -7,7 +7,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip3 install -r requirements.txt
 
 COPY instagram-scraper /app
-COPY prisma ./prisma
 
 ENTRYPOINT ["python3"]
 CMD ["app.py"]

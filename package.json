@@ -4,9 +4,14 @@
   },
   "scripts": {
     "prepare": "husky",
-    "dev": "docker-compose --profile development up -d",
+    "dev:terraform": "cd infra && tflocal init && tflocal apply -auto-approve",
+    "dev:docker": "docker-compose --profile development up -d",
+    "dev": "run-s dev:docker dev:terraform",
     "prod": "docker-compose --profile prod up -d",
     "down": "docker compose down",
     "prisma:sync": "docker cp nextjs-server:/usr/src/app/prisma ./app"
+  },
+  "dependencies": {
+    "npm-run-all": "^4.1.5"
   }
 }
