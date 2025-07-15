@@ -1,0 +1,55 @@
+---
+config:
+  theme: redux
+---
+flowchart TD
+%% Nodes
+  start(["/start"])
+  userOnboarded{"User Onboarded?"}
+  onboardingCode[/"Input onboarding code"/]
+  correctCode?{"Correct code?"}
+
+  %% Bot feature nodes 
+  showFeatures["Show bot features"]
+  %% This should map to an enum in ./types.ts
+  %% All nodes here are input nodes as they should be sent as a keyboard/fixed input type
+  addItem[/"Add Item(s)"/]
+  getCommentTimestampForPost[/"Get Comments & Timestamps for Post"/]
+  switchModeAddItem["Chat mode switched to add items"]
+  switchModeCommentTimestamp["Chat mode switched to get comments & timestamps"]
+  switchModeNone["Chat mode switched to None"]
+
+  %% Utils
+  back[/"Go back"/]
+  itemUrlInput[/"Input Instagram post URL"/]
+  validInstagramURL{"Valid URL/Post (i.e., not private) with shortcode"}
+  instagramUrlContainsImgIdx{"URL contains img_index"}
+
+  %% Flowchart
+  start-->userOnboarded
+  %% Not onboarded branch
+  userOnboarded-- no -->onboardingCode
+  onboardingCode-->correctCode?
+  correctCode?-. no .->onboardingCode
+  correctCode?-- yes -->showFeatures
+
+  %% User chooses intended feature
+  userOnboarded-- yes -->showFeatures-.->addItem & getCommentTimestampForPost
+
+  back-.->switchModeNone-.->showFeatures
+  addItem & getCommentTimestampForPost-.->back
+
+  %% Add item feature
+  subgraph Add Items
+  addItem-->switchModeAddItem-->itemUrlInput
+  itemUrlInput-->validInstagramURL-..->|no|itemUrlInput
+  validInstagramURL-- yes -->instagramUrlContainsImgIdx
+  instagramUrlContainsImgIdx-- yes -->p1["Download image at given index"]
+  instagramUrlContainsImgIdx-- no -->p2["Download image at index 0 (first image)"]
+  p1 & p2 --> supplierInfo["Get supplier info from post & store in database"]
+  supplierInfo-->addSuccessMessage[/"Successfully added item"/]-.->addItem
+  end
+
+  subgraph Get Comments & Timestamps from Post
+  getCommentTimestampForPost-->switchModeCommentTimestamp
+  end
