@@ -72,6 +72,19 @@ services:
     volumes:
       - ./instagram-scraper:/app
       - ./prisma:/app/prisma
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME:-localstack-main}"
+    image: localstack/localstack
+    profiles:
+      - development
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
+    environment:
+      - DEBUG=${DEBUG:-0}
+    volumes:
+      - ./.localstack/volume:/var/lib/localstack
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
 volumes:
   clozet_db_data:
