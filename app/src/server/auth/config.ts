@@ -1,8 +1,5 @@
-import { PrismaAdapter } from '@auth/prisma-adapter'
 import { type DefaultSession, type NextAuthConfig } from 'next-auth'
 import Auth0Provider from 'next-auth/providers/auth0'
-
-import { db } from '~/server/db'
 
 declare module 'next-auth' {
   interface Session extends DefaultSession {
@@ -27,7 +24,6 @@ export const authConfig = {
       clientSecret: AUTH0_CLIENT_SECRET,
       issuer: AUTH0_ISSUER,
       profile(profile) {
-        console.log(profile)
         return {
           id: profile.sub,
           name: profile.name,
@@ -38,14 +34,4 @@ export const authConfig = {
       },
     }),
   ],
-  adapter: PrismaAdapter(db),
-  callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
-  },
 } satisfies NextAuthConfig

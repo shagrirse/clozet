@@ -12,7 +12,7 @@
     "build": "run-s build:*",
     "dev:wss": "dotenv -v PORT=3001 -- tsx watch src/server/wssDevServer.ts --tsconfig tsconfig.server.json",
     "dev:next": "WATCHPACK_POLLING=true node --no-network-family-autoselection node_modules/.bin/next dev --turbopack",
-    "dev": "run-s migrate-dev && run-p dev:*",
+    "dev": "run-s migrate-dev setup-dev && run-p dev:*",
     "db-up": "docker-compose up -d",
     "db-seed": "prisma db seed",
     "db-migrate-dev": "prisma migrate dev",
@@ -20,6 +20,7 @@
     "dx": "run-s db-up db-migrate-dev db-seed dev",
     "dev-nuke": "rm -rf prisma/*.db**",
     "generate": "prisma generate",
+    "setup-dev": "tsx --dns-result-order=ipv4first --no-network-family-autoselection src/scripts/index.ts",
     "migrate-dev": "prisma migrate dev --name init",
     "migrate": "prisma migrate deploy",
     "start": "dotenv -v NODE_ENV=production -- node dist/server/prodServer.js",
@@ -28,7 +29,7 @@
     "lint-fix": "lint --fix",
     "test-dev": "dotenv -v APP_ENV=test -- start-server-and-test dev http://localhost:3000 test",
     "test-start": "dotenv -v APP_ENV=test -v WS_URL=ws://localhost:3000 -- start-server-and-test start http://localhost:3000 test",
-    "test": "playwright test",
+    "test": "jest",
     "postinstall": "prisma generate"
   },
   "prisma": {
@@ -42,6 +43,8 @@
   "dependencies": {
     "@auth/express": "^0.11.0",
     "@auth/prisma-adapter": "^2.10.0",
+    "@grammyjs/conversations": "^2.1.0",
+    "@grammyjs/storage-prisma": "^2.5.1",
     "@prisma/client": "^6.5.0",
     "@tailwindcss/postcss": "^4.1.6",
     "@tanstack/react-query": "^5.69.0",
@@ -69,6 +72,7 @@
     "@tailwindcss/postcss": "^4.0.15",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.13.5",
     "@types/react": "^19.1.0",
     "@types/ws": "^8.2.0",
@@ -78,6 +82,7 @@
     "eslint-plugin-prettier": "^5.4.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "6.0.0-rc.1",
+    "jest": "^30.0.4",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.5.3",
     "prettier": "3.5.3",
@@ -85,6 +90,7 @@
     "prisma": "^6.7.0",
     "start-server-and-test": "^2.0.11",
     "tailwindcss": "^4.0.15",
+    "ts-jest": "^29.4.0",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.31.1"
   },

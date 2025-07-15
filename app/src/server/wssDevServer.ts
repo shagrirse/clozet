@@ -3,7 +3,7 @@ import express from 'express'
 import http from 'http'
 import { Server } from 'ws'
 
-import type { Request, Response } from 'express'
+import type { Request } from 'express'
 import { AppRouter, appRouter as router } from '~/server/api/root'
 import { applyWSSHandler } from '@trpc/server/adapters/ws'
 

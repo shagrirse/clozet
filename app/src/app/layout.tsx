@@ -3,7 +3,7 @@ import '~/styles/global.css'
 import { type Metadata } from 'next'
 import { TRPCReactProvider } from '~/trpc/react'
 import { SessionProvider } from 'next-auth/react'
-import { auth } from '~/server/auth'
+import { auth } from '~/middleware'
 
 export const metadata: Metadata = {
   title: 'clozet',

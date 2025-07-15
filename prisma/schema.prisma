@@ -1,29 +1,40 @@
 datasource db {
   provider = "postgres"
   url      = env("DATABASE_URL")
+  // TODO: Add in when the Prisma extension support extends to pg_cron https://github.com/prisma/prisma/issues/18214
+  // extensions = [pg_cron]
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+  // TODO: Add in when the Prisma extension support extends to pg_cron https://github.com/prisma/prisma/issues/18214
+  // previewFeatures = ["postgresqlExtensions"]
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  nickname  String?
-  email     String?  @unique
-  phone     String?
-  telegram  String?
-  instagram String?
-  role      UserRole // ENUM: SELLER, COLLABORATOR, ADMIN
+  id            String          @id @default(cuid())
+  name          String
+  nickname      String?
+  email         String?         @unique
+  phone         String?
+  telegram      String?
+  instagram     String?
+  role          UserRole // ENUM: SELLER, COLLABORATOR, ADMIN
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 
-  orders              Order[]
-  rentals             Rental[]
-  collaboratorOnDrops CollaboratorAssignment[]
+  telegramSession         TelegramSession?         @relation(fields: [telegram], references: [key])
+  orders                  Order[]
+  rentals                 Rental[]
+  collaboratorOnDrops     CollaboratorAssignment[]
+  telegramOnboardingCodes TelegramOnboardingCode[]
 }
 
 model Supplier {
@@ -34,6 +45,8 @@ model Supplier {
   createdAt DateTime @default(now())
 
   items Item[]
+
+  InstagramPost InstagramPost[]
 }
 
 model Item {
@@ -65,12 +78,26 @@ model Item {
 }
 
 model ItemImage {
-  id         String   @id @default(cuid())
-  itemId     String
-  item       Item     @relation(fields: [itemId], references: [id])
-  url        String
-  position   Int // For reordering
+  id                 String  @id @default(cuid())
+  itemId             String
+  url                String
+  position           Int // For reordering
+  instagramShortcode String?
+
+  item          Item           @relation(fields: [itemId], references: [id])
+  instagramPost InstagramPost? @relation(fields: [instagramShortcode], references: [id])
+
   uploadedAt DateTime @default(now())
+}
+
+model InstagramPost {
+  id         String   @id @unique // This will be the post's shortcode
+  postUrl    String   @unique
+  ingestedAt DateTime @default(now())
+  supplierId String
+
+  supplier  Supplier    @relation(fields: [supplierId], references: [id])
+  ItemImage ItemImage[]
 }
 
 model ShipmentGroup {
@@ -136,16 +163,16 @@ model Order {
 }
 
 model Buyer {
-  id        String   @id @default(cuid())
-  name      String
-  email     String?
-  phone     String?
-  telegram  String?
-  instagram String?
-  address   String?
-  address2  String? // Represents the address's apartment, suite, unit number, etc.
-  postalCode  String?
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  name       String
+  email      String?
+  phone      String?
+  telegram   String?
+  instagram  String?
+  address    String?
+  address2   String? // Represents the address's apartment, suite, unit number, etc.
+  postalCode String?
+  createdAt  DateTime @default(now())
 
   orders  Order[]
   rentals Rental[]
@@ -167,14 +194,14 @@ model Rental {
   buyerId String
   buyer   Buyer  @relation(fields: [buyerId], references: [id])
 
-  startDate  DateTime
-  endDate    DateTime
-  deposit    Float
-  rentalFee  Float
-  penalty    Float?
-  returnedAt DateTime?
+  startDate   DateTime
+  endDate     DateTime
+  deposit     Float
+  rentalFee   Float
+  penalty     Float?
+  returnedAt  DateTime?
   returnNotes String?
-  status     RentalStatus
+  status      RentalStatus
 
   User User[]
 }
@@ -227,9 +254,22 @@ enum RentalStatus {
   COMPLETED
 }
 
-generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+model TelegramOnboardingCode {
+  code      String   @id @default(cuid())
+  userId    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  used      Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TelegramSession {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+
+  User User[]
 }
 
 // NextAuth Adapter Tables
