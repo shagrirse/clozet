@@ -18,6 +18,7 @@ export default function Home() {
 
   return (
     <>
+      <LoginButton />
       <form onSubmit={handleSubmit}>
         <input
           value={name}

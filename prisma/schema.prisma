@@ -30,6 +30,7 @@ model User {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
+  telegramSession         TelegramSession?         @relation(fields: [telegram], references: [key])
   orders                  Order[]
   rentals                 Rental[]
   collaboratorOnDrops     CollaboratorAssignment[]
@@ -44,6 +45,8 @@ model Supplier {
   createdAt DateTime @default(now())
 
   items Item[]
+
+  InstagramPost InstagramPost[]
 }
 
 model Item {
@@ -75,12 +78,26 @@ model Item {
 }
 
 model ItemImage {
-  id         String   @id @default(cuid())
-  itemId     String
-  item       Item     @relation(fields: [itemId], references: [id])
-  url        String
-  position   Int // For reordering
+  id                 String  @id @default(cuid())
+  itemId             String
+  url                String
+  position           Int // For reordering
+  instagramShortcode String?
+
+  item          Item           @relation(fields: [itemId], references: [id])
+  instagramPost InstagramPost? @relation(fields: [instagramShortcode], references: [id])
+
   uploadedAt DateTime @default(now())
+}
+
+model InstagramPost {
+  id         String   @id @unique // This will be the post's shortcode
+  postUrl    String   @unique
+  ingestedAt DateTime @default(now())
+  supplierId String
+
+  supplier  Supplier    @relation(fields: [supplierId], references: [id])
+  ItemImage ItemImage[]
 }
 
 model ShipmentGroup {
@@ -245,6 +262,14 @@ model TelegramOnboardingCode {
   used      Boolean  @default(false)
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TelegramSession {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+
+  User User[]
 }
 
 // NextAuth Adapter Tables

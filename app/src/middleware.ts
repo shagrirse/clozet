@@ -13,7 +13,7 @@ export default auth((req) => {
 
   const AUTH_ROUTES = ['/api/auth/signin']
 
-  const PROTECTED_ROUTES = ['/', '/api']
+  const PROTECTED_ROUTES: string[] = []
 
   const isAccessingApiAuthRoute = pathname.startsWith('/api/auth')
   const isAccessingAuthRoute = AUTH_ROUTES.some((route) =>

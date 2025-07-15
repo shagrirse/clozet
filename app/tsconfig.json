@@ -28,14 +28,25 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "noImplicitAny": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "./postcss.config.js",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "jest.config.ts"
   ],
   "exclude": [
     "node_modules"
