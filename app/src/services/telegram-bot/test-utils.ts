@@ -1,6 +1,6 @@
 import { Update } from 'grammy/types'
 import { ApiCallFn } from 'grammy'
-import { bot } from '.'
+import { bot } from './bot'
 
 type Function = ApiCallFn<typeof bot.api.raw>
 type ResultType = Awaited<ReturnType<Function>>
