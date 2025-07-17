@@ -4,8 +4,25 @@ import reactPlugin from 'eslint-plugin-react'
 import hooksPlugin from 'eslint-plugin-react-hooks'
 import parser from '@typescript-eslint/parser'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import pluginJest from 'eslint-plugin-jest'
 
 export default tseslint.config(
+  // Jest
+  {
+    // update this to match your test files
+    files: ['**/*.spec.js', '**/*.test.js'],
+    plugins: { jest: pluginJest },
+    languageOptions: {
+      globals: pluginJest.environments.globals.globals,
+    },
+    rules: {
+      'jest/no-disabled-tests': 'warn',
+      'jest/no-focused-tests': 'error',
+      'jest/no-identical-title': 'error',
+      'jest/prefer-to-have-length': 'warn',
+      'jest/valid-expect': 'error',
+    },
+  },
   {
     files: ['**/*.js', '**/*.ts', '**/*.tsx'],
     plugins: {
@@ -45,6 +62,7 @@ export default tseslint.config(
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
       '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/restrict-plus-operands': 'off',
+      '@typescript-eslint/unbound-method': 'off',
       ...pluginNext.configs.recommended.rules,
       ...pluginNext.configs['core-web-vitals'].rules,
     },

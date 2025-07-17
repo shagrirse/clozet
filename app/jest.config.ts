@@ -6,11 +6,9 @@ const config: Config = {
   rootDir: './src',
   testMatch: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  setupFilesAfterEnv: [],
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/../tsconfig.json',
-    },
+  setupFilesAfterEnv: ['<rootDir>/../test/prisma-mock.ts'],
+  moduleNameMapper: {
+    '~/(.*)': '<rootDir>/../src/$1',
   },
   coverageDirectory: '../coverage',
   collectCoverageFrom: [
