@@ -9,7 +9,7 @@ import { applyWSSHandler } from '@trpc/server/adapters/ws'
 
 import { ExpressAuth, getSession } from '@auth/express'
 import { authConfig } from './auth/config'
-import { db } from './db'
+import db from './db'
 import { Session } from 'next-auth'
 
 const app = express()

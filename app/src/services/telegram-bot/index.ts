@@ -1,17 +1,10 @@
-import { Bot, Context, session, SessionFlavor } from 'grammy'
+import { session } from 'grammy'
 import { PrismaAdapter } from '@grammyjs/storage-prisma'
-import { db } from '~/server/db'
+import db from '~/server/db'
 import { instagramUrlRegex } from '~/lib/constants'
-import { SessionData, Mode } from './types'
+import { Mode } from './types'
 import { start } from './features/start'
-
-const { TELEGRAM_TOKEN: token = '' } = process.env
-
-// create context for grammy instance
-export type botContext = Context & SessionFlavor<SessionData>
-
-// Set your token in the vercel environment variable
-export const bot = new Bot<botContext>(token)
+import { bot } from './bot'
 
 bot.use(
   session({

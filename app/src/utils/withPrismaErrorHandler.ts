@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { TRPCContext } from '~/server/api/trpc'
 
-export function withPrismaErrorHandler<I = undefined, R = unknown>(
+export function withTRPCPrismaErrorHandler<I = undefined, R = unknown>(
   handler: (opts: { ctx: TRPCContext; input?: I }) => Promise<R>,
 ): (opts: { ctx: TRPCContext; input?: I }) => Promise<R> {
   return async (opts) => {

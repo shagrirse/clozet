@@ -1,5 +1,5 @@
 const { APP_URL: webhookBaseUrl = '', TELEGRAM_SECRET } = process.env
-import { bot } from '~/services/telegram-bot'
+import { bot } from '~/services/telegram-bot/bot'
 
 export async function setTelegramWebhook() {
   const webhookUrl = webhookBaseUrl + '/api/webhook/telegram'

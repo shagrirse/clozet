@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 
-import { bot } from '~/services/telegram-bot'
+import { bot } from '~/services/telegram-bot/bot'
 import { webhookCallback } from 'grammy'
 const { TELEGRAM_SECRET } = process.env
 

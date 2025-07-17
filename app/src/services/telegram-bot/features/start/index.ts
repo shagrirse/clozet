@@ -1,5 +1,5 @@
 import { CommandContext, Keyboard } from 'grammy'
-import { botContext } from '../..'
+import { botContext } from '../../bot'
 import { Mode } from '../../types'
 
 export async function start(ctx: CommandContext<botContext>) {
