@@ -256,9 +256,9 @@ enum RentalStatus {
 
 model TelegramOnboardingCode {
   code      String   @id @default(cuid())
-  userId    String
+  userId    String @unique
   createdAt DateTime @default(now())
-  expiresAt DateTime
+  expiresAt DateTime @default(dbgenerated("(now() + '01:00:00'::interval)"))
   used      Boolean  @default(false)
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
