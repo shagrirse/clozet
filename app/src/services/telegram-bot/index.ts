@@ -5,6 +5,7 @@ import { instagramUrlRegex } from '~/lib/constants'
 import { Mode } from './types'
 import { start } from './features/start'
 import { bot } from './bot'
+import { conversations } from '@grammyjs/conversations'
 
 bot.use(
   session({
@@ -12,6 +13,8 @@ bot.use(
     storage: new PrismaAdapter(db.telegramSession),
   }),
 )
+
+bot.use(conversations())
 
 // attach all middleware
 bot.command('start', start)
@@ -41,3 +44,5 @@ bot.hears(instagramUrlRegex, async (ctx) => {
   await ctx.reply(instagramShortcode)
   await ctx.reply(imgIndex ?? 1)
 })
+
+export { bot }

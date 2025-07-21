@@ -6,9 +6,10 @@ const config: Config = {
   rootDir: './src',
   testMatch: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  setupFilesAfterEnv: ['<rootDir>/../test/prisma-mock.ts'],
+  setupFilesAfterEnv: ['<rootDir>/../__tests__/setup/prisma-mock.ts'],
   moduleNameMapper: {
     '~/(.*)': '<rootDir>/../src/$1',
+    '~tests/(.*)': '<rootDir>/../__tests__/$1',
   },
   coverageDirectory: '../coverage',
   collectCoverageFrom: [
@@ -17,6 +18,7 @@ const config: Config = {
     '!**/node_modules/**',
     '!**/test/**',
   ],
+  clearMocks: true,
 }
 
 export default config
