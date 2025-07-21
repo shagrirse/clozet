@@ -4,11 +4,12 @@ export const createOnboardingCode = async (userId: string) => {
   return db.telegramOnboardingCode.create({ data: { userId } })
 }
 
-export const getOnboardingCode = async (
-  code: string,
-): Promise<{ code: string } | null> => {
+export const getOnboardingCode = async (code: string) => {
   return db.telegramOnboardingCode.findUnique({
     where: { code },
+    include: {
+      user: true,
+    },
   })
 }
 
