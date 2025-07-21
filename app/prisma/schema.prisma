@@ -17,9 +17,9 @@ model User {
   name          String
   nickname      String?
   email         String?         @unique
-  phone         String?
-  telegram      String?
-  instagram     String?
+  phone         String?         @unique
+  telegram      String?         @unique
+  instagram     String?         @unique
   role          UserRole // ENUM: SELLER, COLLABORATOR, ADMIN
   emailVerified DateTime?
   image         String?
